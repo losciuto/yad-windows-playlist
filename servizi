@@ -1,0 +1,17 @@
+#!/bin/bash
+
+cd /var/www/html/pl3
+
+echo "parametri 1: $1"
+
+case $1 in
+    Crea*) cmd="php basedati.php" ;;
+    Aggio*) cmd="php aggiornadb.php" ;;
+    Visua*) cmd="php generi.php" ;;
+    Esporta*) cmd="php lista_txt.php" ;;
+    *) exit 1 ;;    
+esac
+
+echo "$cmd"
+
+eval exec $cmd
