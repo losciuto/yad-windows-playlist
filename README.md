@@ -1,2 +1,2 @@
-# yad-windows-playlist
-Yad files to manage playlist
+# Yad interface for Playlist
+Yad-bash files to manage playlist.
