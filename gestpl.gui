@@ -181,7 +181,7 @@ yad --plug=$KEY --tabnum=6 --listen --tail --text-info &
 
 # Finestra Principale
 action=$(yad --notebook --key=$KEY --tab="Play List" --tab="Servizi" --tab="Ricerca" --tab="Parametri" --tab="Info" --tab="Test" \
-			 --active-tab=1 --buttons-layout=center --center \
+			 --active-tab=1 --buttons-layout=center --center --no-escape \
 	    --title="Gestione Play List" --image=$imagedir/playlist3.png --window-icon="$imagedir/playlist3.png" \
 	    --width=400 --image-on-top --text="<span foreground='black'><b><big><big>Gestisci la Play List</big></big></b></span>" \
 	    --button="gtk-close:1");
