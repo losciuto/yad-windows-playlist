@@ -6,5 +6,5 @@ Lanciare [gestpl.gui](https://github.com/losciuto/yad-windows-playlist/edit/mast
 
 # Qualche screenshot:
 
-<center>![Primo tab](https://github.com/losciuto/yad-windows-playlist/blob/master/images/tabplaylist.png)</center>
+![Primo tab](https://github.com/losciuto/yad-windows-playlist/blob/master/images/tabplaylist.png?raw=true "Playlist")
 
