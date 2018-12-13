@@ -21,6 +21,7 @@ includ=""
 player="smplayer"
 plfile="testpl.xml.xspf"
 pldire="scalette/"
+formati="m3u,pls"
 
 if [ -f $paramdir/extras.txt ]; then
 # recupero dati da file extras.txt
@@ -32,6 +33,7 @@ if [ -f $paramdir/extras.txt ]; then
 	player="$(cut -d',' -f2 <<<"$extras")"
 	plfile="$(cut -d',' -f3 <<<"$extras")"
 	pldire="$(cut -d',' -f4 <<<"$extras")"
+	formati="$(cut -d',' -f5 <<<"$extras")"
 fi
 
 #esporta per uso contestuale nel tab Playlist
@@ -39,6 +41,7 @@ export esclud
 export player
 export plfile
 export pldire
+export formati
 
 if [ -f $paramdir/plc.txt ]; then
 # recupero dati da file plc.txt
@@ -97,9 +100,9 @@ fi
 
 }
 
-export -f configure
+#cat test.output | yad --width=400 --heigth=400 --list --title "Attività esterna" --text "Quello che sto facendo..." --column "Output" 
 
-#eval exec 'bash -c "configure"'
+export -f configure
 
 configure
 
@@ -120,7 +123,7 @@ yad --plug=$KEY --tabnum=1 --form --separator='\n' --item-separator="," --quoted
 	    --field=":lbl" "" \
 	    --field="Termini da includere\n(<i>al volo. Ha prevalenza su\nquelli da escludere</i>):" "$include" \
 	    --field="<span foreground='white' background='green'><b><big><big> Clicca qui per creare ed avviare la Playlist </big></big></b></span>:FBTN" \
-	             'bash -c "echo %3,%4,%7,%9,%10,%12,%14,${player},${plfile},${pldire} > ${paramdir}/plc.txt && configure && ${directory}/esegui.altro -n%3 -g%4 -u%7 -r%9 -o%10 -m${player} -f${plfile} -d${pldire} -e$%12 -i%14"' \ &
+	             'bash -c "echo %3,%4,%7,%9,%10,%12,%14,${player},${plfile},${pldire},${formati} > ${paramdir}/plc.txt && configure && ${directory}/esegui.altro -n%3 -g%4 -u%7 -r%9 -o%10 -m$player -f${plfile} -d${pldire} -e$%12 -i%14 -p${formati}"' \ &
 
 # Finestra Servizi
 yad --plug=$KEY --tabnum=2 --form --separator='\n' --item-separator="," --quoted-output --image=$imagedir/servizi.jpg \
@@ -157,10 +160,11 @@ yad --plug=$KEY --tabnum=4 --form --separator='\n' --quoted-output --image=$imag
         --field="Programma da avviare\nper la riproduzione\n<small>(Così come verrebbe richiamato\n da riga di comando)</small>:" "$player" \
         --field="Nome del file della Playlist:" "$plfile" \
         --field="Cartella dove far risiedere\nil file della Playlist:" "$pldire" \
+        --field="Formati di playlist da creare\nin aggiunta ai default\nFormati gestiti m3u e pls\n(<i>Separare col <b>-</b> 'meno' o trattino.\nNON usare spazi</i>):" "$formati" \
     	--field=":lbl" "" \
         --field="<span foreground='white' background='green'><b><big><big> Conferma Modifiche </big></big></b></span> \
                  !$imagedir/salva.png!<span foreground='blue'><b><big>clicca qui per memorizzare le modifiche</big></b></span>":FBTN \
-                 'bash -c "echo %3,%4,%5,%6 > ${paramdir}/extras.txt &&  configure"' \   &
+                 'bash -c "echo %3,%4,%5,%6,%7 > ${paramdir}/extras.txt &&  configure"' \   &
 
 # Finestra Info
 yad --plug=$KEY --tabnum=5 --image=$imagedir/indexp.png \
@@ -172,7 +176,7 @@ yad --plug=$KEY --tabnum=5 --image=$imagedir/indexp.png \
 ed avvio di playlist utilizzando
                          Yad</big></big></big>
 
-    	        <big><i>Versione 1.1.2 del Dicembre 2018</i></big>
+    	        <big><i>Versione 1.2.0 del Dicembre 2018</i></big>
     	        <small><i>by Massimo Lo Sciuto</i></small>" \ &
 
 # Finestra Principale
@@ -190,6 +194,7 @@ if [[ $ret -eq 1 ]]; then
 	unset player
 	unset plfile
 	unset pldire
+	unset formati
 	unset configure
 
 	exit 0

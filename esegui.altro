@@ -9,6 +9,8 @@ echo "$7"
 echo "$8"
 echo "$9" 
 echo "${10}" 
+echo "${11}" 
 
 cd /var/www/html/pl3
-php playlistcasuale.php "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9" "${10}"&
+
+php playlistcasuale.php "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9" "${10}" "${11}" &
