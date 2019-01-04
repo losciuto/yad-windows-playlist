@@ -156,7 +156,7 @@ yad --plug=$KEY --tabnum=2 --form --separator='\n' --item-separator="," --quoted
 	    --field="<span foreground='blue'><b><big><big>Scegli uno dei servizi disponibili</big></big></b></span>:lbl" "" \
 	    --field="Servizi disponibili:":CB "$serv,$servizi" \
 	    --field=":lbl" "" \
-	    --field="(<b>*</b>) <i>Richiede files xml estratti da Kodi (.nfo)</i>:lbl" "" \
+	    --field="(<b>*</b>) <i>Richiede files xml esportati da Kodi (.nfo)</i>:lbl" "" \
 	    --field=":lbl" "" \
 	    --field="(<b>**</b>) <i>Richiede collegamento ad internet</i>:lbl" "" \
 	    --field=":lbl" "" \
