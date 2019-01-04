@@ -9,6 +9,7 @@ case $1 in
     Aggio*) cmd="php aggiornadb.php" ;;
     Visua*) cmd="php generi.php" ;;
     Esporta*) cmd="php lista_txt.php" ;;
+    Scaping*) cmd="php aggiornadaimdb.php";;
     *) exit 1 ;;    
 esac
 
