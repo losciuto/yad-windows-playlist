@@ -1,0 +1,26 @@
+#! /bin/bash
+
+directory="/var/www/html/pl3"
+#"Crea Base Dati" "Con Truncate" "Senza Truncate" "Aggiorna Locandina" "Visualizza Generi" "Esporta lista"
+
+action=$(yad --width 350 --entry --title "Servizi di base Archivio Films" \
+    --image=gnome-shutdown \
+    --button="gtk-ok:0" --button="gtk-close:1" \
+    --text "Gestione Video:" \
+    --entry-text \
+    "Crea Base Dati" "Aggiorna Locandina" "Visualizza Generi" "Esporta lista")
+ret=$?
+
+[[ $ret -eq 1 ]] && exit 0
+
+case $action in
+    Con*) cmd=$directory'/cambiadir php "'$directory'/scandir.php" 1 /media/root/TrekStor1/Films /media/root/backup/Films' ;;
+    Senza*) cmd=$directory'/cambiadir php "'$directory'/scandir.php" 0 /media/root/TrekStor1/Films /media/root/backup/Films' ;;
+    Crea*) cmd=$directory'/cambiadir php "'$directory'/basedati.php"' ;;
+    Aggio*) cmd=$directory'/cambiadir php "'$directory'/aggiornadb.php"' ;;
+    Visua*) cmd=$directory'/cambiadir php "'$directory'/generi.php"' ;;
+    Esporta*) cmd=$directory'/cambiadir php "'$directory'/lista_txt.php"' ;;
+    *) exit 1 ;;    
+esac
+echo $cmd
+eval exec $cmd

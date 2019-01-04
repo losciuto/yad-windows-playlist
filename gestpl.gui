@@ -1,5 +1,6 @@
 #!/bin/bash
 #killall yad
+
 # da modificare la directory per indirizzarla dove risiedono i files della Playlist e lo stesso gestpl.gui
 export directory="/var/www/html/pl3"
 
@@ -10,103 +11,127 @@ paramdir="./params"
 export paramdir
 
 function configure(){
-nume="3"
-lista=" "
-ult="FALSE"
-reg=""
-ord="FALSE"
+	nume="3"
+	lista=" "
+	ult="FALSE"
+	reg=""
+	ord="FALSE"
 
-esclud="cartoni inglesi cd1 cd2 originali vob serie volume originale"
-includ=""
-player="smplayer"
-plfile="testpl.xml.xspf"
-pldire="scalette/"
-formati="m3u,pls"
+	esclud="cartoni inglesi cd1 cd2 originali vob serie volume originale"
+	includ=""
+	player="smplayer"
+	plfile="testpl.xml.xspf"
+	pldire="scalette/"
+	formati="m3u,pls"
 
-if [ -f $paramdir/extras.txt ]; then
-# recupero dati da file extras.txt
-	while IFS='' read -r line || [[ -n "$line" ]]; do
-	    extras="$line"
-	done < $paramdir/extras.txt
+	# se esiste il file extras.txt
+	if [ -f $paramdir/extras.txt ]; then
+		# recupero dati da file extras.txt
+		while IFS='' read -r line || [[ -n "$line" ]]; do
+		    extras="$line"
+		done < $paramdir/extras.txt
 
-	esclud="$(cut -d',' -f1 <<<"$extras")"
-	player="$(cut -d',' -f2 <<<"$extras")"
-	plfile="$(cut -d',' -f3 <<<"$extras")"
-	pldire="$(cut -d',' -f4 <<<"$extras")"
-	formati="$(cut -d',' -f5 <<<"$extras")"
-fi
+		# assegnazione delle variabili
+		esclud="$(cut -d',' -f1 <<<"$extras")"
+		player="$(cut -d',' -f2 <<<"$extras")"
+		plfile="$(cut -d',' -f3 <<<"$extras")"
+		pldire="$(cut -d',' -f4 <<<"$extras")"
+		formati="$(cut -d',' -f5 <<<"$extras")"
+	fi
 
-#esporta per uso contestuale nel tab Playlist
-export esclud
-export player
-export plfile
-export pldire
-export formati
+	#esporta per uso contestuale nel tab Playlist
+	export esclud
+	export player
+	export plfile
+	export pldire
+	export formati
 
-if [ -f $paramdir/plc.txt ]; then
-# recupero dati da file plc.txt
-	while IFS='' read -r line || [[ -n "$line" ]]; do
-	    plc="$line"
-	done < $paramdir/plc.txt
+	# se esiste ...
+	if [ -f $paramdir/plc.txt ]; then
+		# recupero dati da file plc.txt 
+		while IFS='' read -r line || [[ -n "$line" ]]; do
+		    plc="$line"
+		done < $paramdir/plc.txt
 
-	nume="$(cut -d',' -f1 <<<"$plc")"
-	lista="$(cut -d',' -f2 <<<"$plc")"
-	ult="$(cut -d',' -f3 <<<"$plc")"
-	reg="$(cut -d',' -f4 <<<"$plc")"
-	ord="$(cut -d',' -f5 <<<"$plc")"
-fi
+		# assegnazione delle variabili
+		nume="$(cut -d',' -f1 <<<"$plc")"
+		lista="$(cut -d',' -f2 <<<"$plc")"
+		ult="$(cut -d',' -f3 <<<"$plc")"
+		reg="$(cut -d',' -f4 <<<"$plc")"
+		ord="$(cut -d',' -f5 <<<"$plc")"
+	fi
 
-ser="Crea Base Dati"
+	servizi=$(echo "Aggiorna generi - registi - anno e durata (*),Scaping generi - registi - durata e anno da IMDb Inglese (**),Visualizza Generi,Esporta lista,Crea Base Dati (Attenzione: si perdono tutti i dati)")
+	ser="Crea Base Dati"
 
-if [ -f $paramdir/serv.txt ]; then
-# recupero dati da file serv.txt
-	while IFS='' read -r line || [[ -n "$line" ]]; do
-	    serv="$line"
-	done < $paramdir/serv.txt
+	# se esiste...
+	if [ -f $paramdir/serv.txt ]; then
+		# recupero dati da file serv.txt
+		while IFS='' read -r line || [[ -n "$line" ]]; do
+		    serv="$line"
+		done < $paramdir/serv.txt
 
-	ser="$(cut -d',' -f1 <<<"$serv")"
+		# assegnazione delle variabili
+		ser="$(cut -d',' -f1 <<<"$serv")"
 
-fi
+	fi
 
-ind1=""
-ind2=""
-ind3=""
-ind4=""
-svuo="FALSE"
+	ind1=""
+	ind2=""
+	ind3=""
+	ind4=""
+	svuo="FALSE"
 
-if [ -f $paramdir/ric.txt ]; then
-# recupero dati da file ric.txt
-	while IFS='' read -r line || [[ -n "$line" ]]; do
-	    ric="$line"
-	done < $paramdir/ric.txt
+	# se esiste...
+	if [ -f $paramdir/ric.txt ]; then
+		# recupero dati da file ric.txt
+		while IFS='' read -r line || [[ -n "$line" ]]; do
+		    ric="$line"
+		done < $paramdir/ric.txt
 
-	svuo="$(cut -d',' -f1 <<<"$ric")"
-	ind1="$(cut -d',' -f2 <<<"$ric")"
-	ind2="$(cut -d',' -f3 <<<"$ric")"
-	ind3="$(cut -d',' -f4 <<<"$ric")"
-	ind4="$(cut -d',' -f5 <<<"$ric")"
-fi
+		# assegnazione delle variabili
+		svuo="$(cut -d',' -f1 <<<"$ric")"
+		ind1="$(cut -d',' -f2 <<<"$ric")"
+		ind2="$(cut -d',' -f3 <<<"$ric")"
+		ind3="$(cut -d',' -f4 <<<"$ric")"
+		ind4="$(cut -d',' -f5 <<<"$ric")"
+	fi
 
-genre=$(echo "Fantascienza Sci-Fi,Animazione Animation Children Famiglia Family,Crime Azione Action Thriller,Western,Avventura Adventure Azione,Dramma Drama,Commedia Comedy,Music Musica Musical,Fantasy Foreign,Mistero Mistery,Romance short name,Storia Biography History,Documentario Documentary,Horror,Sport,Televisione film, ")
-servizi=$(echo "Aggiorna generi registi e anno,Visualizza Generi,Esporta lista,Crea Base Dati (Attenzione: si perdono tutti i dati)")
+	# generi di default
+	genre=$(echo "Fantascienza Sci-Fi,Animazione Animation Children Famiglia Family,Crime Azione Action Thriller,Western,Avventura Adventure Azione,Dramma Drama,Commedia Comedy,Music Musica Musical,Fantasy Foreign,Mistero Mistery,Romance short name,Storia Biography History,Documentario Documentary,Horror,Sport,Televisione film, ")
 
-if [ -f $paramdir/generi.txt ]; then
-# recupero dati da file generi.txt
-	while IFS='' read -r line || [[ -n "$line" ]]; do
-	    genre="$line"
-	done < $paramdir/generi.txt
+	# legge il file generi.txt (se esiste) eventualmente creato dal servizio 'Visualizza Generi' e popola la relativa variabile
+	if [ -f $paramdir/generi.txt ]; then
+	# recupero dati da file generi.txt
+		while IFS='' read -r line || [[ -n "$line" ]]; do
+			# assegnazione delle variabili			
+		    genre="$line"
+		done < $paramdir/generi.txt
 
-fi
+	fi
+
+	playl=$(echo ".xspf!.pls.m3u.txt!.m3u!.pls")
+
+
+	# legge il file ultcmdpl.txt (se esiste) 
+	if [ -f $paramdir/ultcmdpl.txt ]; then
+	# recupero dati da file ultcmdpl.txt
+		while IFS='' read -r line || [[ -n "$line" ]]; do
+			# assegnazione delle variabili			
+		    pla="$line"
+		done < $paramdir/ultcmdpl.txt
+
+	fi
 
 }
 
-#cat test.output | yad --width=400 --heigth=400 --list --title "Attività esterna" --text "Quello che sto facendo..." --column "Output" 
-
+# esporto funzione 'configure'
 export -f configure
 
+#esegui funzione per la configurazione iniziale
 configure
 
-# Finestra Playlist
+# Tab Playlist
 yad --plug=$KEY --tabnum=1 --form --separator='\n' --item-separator="," --quoted-output --image=$imagedir/films1.png  \
 	    --field=":lbl" "" \
 		--field="<span foreground='blue'><b><big><big>Sezione che genera la Playlist casuale</big></big></b></span>:lbl" "" \
@@ -125,16 +150,20 @@ yad --plug=$KEY --tabnum=1 --form --separator='\n' --item-separator="," --quoted
 	    --field="<span foreground='white' background='green'><b><big><big> Clicca qui per creare ed avviare la Playlist </big></big></b></span>:FBTN" \
 	             'bash -c "echo %3,%4,%7,%9,%10,%12,%14,${player},${plfile},${pldire},${formati} > ${paramdir}/plc.txt && configure && ${directory}/esegui.altro -n%3 -g%4 -u%7 -r%9 -o%10 -m$player -f${plfile} -d${pldire} -e$%12 -i%14 -p${formati}"' \ &
 
-# Finestra Servizi
+# Tab Servizi
 yad --plug=$KEY --tabnum=2 --form --separator='\n' --item-separator="," --quoted-output --image=$imagedir/servizi.jpg \
 	    --field=":lbl" "" \
 	    --field="<span foreground='blue'><b><big><big>Scegli uno dei servizi disponibili</big></big></b></span>:lbl" "" \
 	    --field="Servizi disponibili:":CB "$serv,$servizi" \
 	    --field=":lbl" "" \
+	    --field="(<b>*</b>) <i>Richiede files xml estratti da Kodi (.nfo)</i>:lbl" "" \
+	    --field=":lbl" "" \
+	    --field="(<b>**</b>) <i>Richiede collegamento ad internet</i>:lbl" "" \
+	    --field=":lbl" "" \
 	    --field="<span foreground='white' background='green'><b><big><big> Clicca qui per avviare il Servizio </big></big></b></span>":FBTN \
 	             'bash -c "echo %3 > ${paramdir}/serv.txt && configure && ${directory}/servizi %3"' \  &
 
-# Finestra Ricerca
+# Tab Ricerca
 yad --plug=$KEY --tabnum=3 --form --separator='\n' --quoted-output --image=$imagedir/ricerca.png \
 	    --field=":lbl" "" \
 	    --field="<span foreground='blue'><b><big><big>Scegli le periferiche e le cartelle</big></big></b></span> :lbl" "" \
@@ -148,11 +177,10 @@ yad --plug=$KEY --tabnum=3 --form --separator='\n' --quoted-output --image=$imag
         --field="<span foreground='white' background='green'><b><big><big> Avvia Ricerca </big></big></b></span> \
                  !$imagedir/esegui.png!<span foreground='blue'><b><big>clicca qui per avviare la ricerca</big></b></span>":FBTN \
                  'bash -c "echo %8,%3,%4,%5,%6 > ${paramdir}/ric.txt && configure && php ${directory}/scandir.php %8 %3 %4 %5 %6"' \   &
-#                 'bash -c "${directory}/ricerca %8 %3 %4 %5 %6"' \  > $res3 &
 
-# il %8 è in prima posizione per evitare di dover modificare tutti i passaggi
+# il parametro %8 è in prima posizione per evitare di dover modificare tutti i passaggi
 
-# Finestra Parametri
+# Tab Parametri
 yad --plug=$KEY --tabnum=4 --form --separator='\n' --quoted-output --image=$imagedir/configuration.png \
     	--field="<span foreground='blue'><big><b>I parametri che seguono possono essere modificati\nsolo se si sa cosa si sta facendo</b></big></span>:lbl" "" \
     	--field=":lbl" "" \
@@ -164,10 +192,20 @@ yad --plug=$KEY --tabnum=4 --form --separator='\n' --quoted-output --image=$imag
     	--field=":lbl" "" \
         --field="<span foreground='white' background='green'><b><big><big> Conferma Modifiche </big></big></b></span> \
                  !$imagedir/salva.png!<span foreground='blue'><b><big>clicca qui per memorizzare le modifiche</big></b></span>":FBTN \
-                 'bash -c "echo %3,%4,%5,%6,%7 > ${paramdir}/extras.txt &&  configure"' \   &
+                 'bash -c "echo %3,%4,%5,%6,%7 > ${paramdir}/extras.txt && configure"' \   &
 
-# Finestra Info
-yad --plug=$KEY --tabnum=5 --image=$imagedir/indexp.png \
+# Tab Play
+yad --plug=$KEY --tabnum=5 --form --separator='\n' --quoted-output --image=$imagedir/Videos-iconp.png \
+    	--field="<span foreground='blue'><big><b>Esegui l'ultima Playlist creata</b></big></span>:lbl" "" \
+    	--field=":lbl" "" \
+	    --field="Formati disponibili: ($plfile)":CB "$pla!$playl" \
+    	--field=":lbl" "" \
+        --field="<span foreground='white' background='green'><b><big><big> Esegui la playlist </big></big></b></span> \
+                 !$imagedir/play.png!<span foreground='blue'><b><big>clicca qui eseguire l'ultima playlist creata</big></b></span>":FBTN \
+                 'bash -c "echo %3 > ${paramdir}/ultcmdpl.txt && configure && ${player} ${pldire}${plfile}%3"' \   &
+
+# Tab Info
+yad --plug=$KEY --tabnum=6 --image=$imagedir/indexp.png \
     	--text "<span foreground='blue'><big><big><b>Info sull'applicazione</b></big></big></span>
 
     	        
@@ -176,11 +214,11 @@ yad --plug=$KEY --tabnum=5 --image=$imagedir/indexp.png \
 ed avvio di playlist utilizzando
                          Yad</big></big></big>
 
-    	        <big><i>Versione 1.2.0 del Dicembre 2018</i></big>
+    	        <big><i>Versione 1.4.0 del Gennaio 2019</i></big>
     	        <small><i>by Massimo Lo Sciuto</i></small>" \ &
 
 # Finestra Principale
-action=$(yad --notebook --key=$KEY --tab="Playlist" --tab="Servizi" --tab="Ricerca" --tab="Parametri" --tab="Info" \
+action=$(yad --notebook --key=$KEY --tab="Playlist" --tab="Servizi" --tab="Ricerca" --tab="Parametri" --tab="Play" --tab="Info" \
 			 --active-tab=1 --buttons-layout=center --center --no-escape \
 	    --title="Gestione Playlist" --image=$imagedir/playlist3.png --window-icon="$imagedir/playlist3.png" \
 	    --width=400 --image-on-top --text="<span foreground='black'><b><big><big>Gestisci la Playlist</big></big></b></span>" \
@@ -188,6 +226,7 @@ action=$(yad --notebook --key=$KEY --tab="Playlist" --tab="Servizi" --tab="Ricer
 ret=$?
 
 if [[ $ret -eq 1 ]]; then
+	# svuoto tutte le variabili d'ambiente create
 	unset directory
 	unset paramdir
 	unset esclud
